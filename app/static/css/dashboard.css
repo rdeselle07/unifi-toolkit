@@ -371,7 +371,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 2rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
 }
 
 .tool-card {
@@ -607,11 +607,18 @@ body {
     background: var(--secondary-color);
 }
 
-/* Info Cards (inside tools grid) */
+/* Info Cards Row */
+.info-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
 .info-card-grid {
     background: var(--surface);
     border-radius: 12px;
-    padding: 2rem;
+    padding: 1.25rem;
     box-shadow: var(--shadow);
 }
 
@@ -868,6 +875,11 @@ body {
     }
 
     .tools-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .info-row {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }

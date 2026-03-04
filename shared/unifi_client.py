@@ -1906,8 +1906,14 @@ class UniFiClient:
                 # Filter for APs and extract relevant stats
                 aps = []
                 for device in devices:
-                    if device.get('type') == 'uap':
-                        model_code = device.get('model', '')
+                    device_type = device.get('type', '')
+                    model_code = device.get('model', '')
+                    # Include regular APs and Express devices in AP-only mode
+                    is_express_ap = (
+                        (device_type == 'ux' or model_code.upper() in EXPRESS_MODEL_CODES)
+                        and device.get('device_mode_override') == 'mesh'
+                    )
+                    if device_type == 'uap' or is_express_ap:
 
                         # Get radio info for channel
                         radio_table = device.get('radio_table', [])
