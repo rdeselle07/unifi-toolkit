@@ -175,12 +175,14 @@ Configure via `.env` or the web UI (web UI takes precedence):
 
 | Variable | Description |
 |----------|-------------|
-| `UNIFI_CONTROLLER_URL` | Controller URL (e.g., `https://192.168.1.1`) |
+| `UNIFI_CONTROLLER_URL` | Local controller IP/hostname (e.g., `https://192.168.1.1`) |
 | `UNIFI_USERNAME` | Username (legacy controllers) |
 | `UNIFI_PASSWORD` | Password (legacy controllers) |
 | `UNIFI_API_KEY` | API key (UniFi OS: UDM, UCG, Cloud Key) |
 | `UNIFI_SITE_ID` | Site ID from URL, not friendly name (default: `default`). For multi-site, use ID from `/manage/site/{id}/...` |
 | `UNIFI_VERIFY_SSL` | SSL verification (default: `false`) |
+
+> **Note:** Use your controller's local IP address (e.g., `https://192.168.1.1`). Cloud access via `unifi.ui.com` is not supported.
 
 #### Tool Settings
 

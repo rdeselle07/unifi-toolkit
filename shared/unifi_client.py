@@ -775,10 +775,10 @@ class UniFiClient:
             'inner_alert_signature': signature,
             'inner_alert_signature_id': ips_data.get('signature_id'),
             'inner_alert_severity': severity,
-            'inner_alert_category': ips_data.get('ips_category') or event.get('service', ''),
+            'inner_alert_category': ips_data.get('category_name') or ips_data.get('ips_category') or event.get('service', ''),
             'inner_alert_action': action,
             'msg': signature,
-            'catname': ips_data.get('ips_category'),
+            'catname': ips_data.get('category_name') or ips_data.get('ips_category'),
 
             # Network - Source
             'src_ip': source.get('ip'),
@@ -796,9 +796,9 @@ class UniFiClient:
             # v2 API returns 'in' as an object with network_id/network_name
             'in_iface': event.get('in', {}).get('network_name') if isinstance(event.get('in'), dict) else event.get('in'),
 
-            # Geo info (if available in v2 format)
-            'src_ip_country': source.get('country'),
-            'dest_ip_country': destination.get('country'),
+            # Geo info (v2 uses 'region' for country code, e.g. "NL")
+            'src_ip_country': source.get('region') or source.get('country'),
+            'dest_ip_country': destination.get('region') or destination.get('country'),
 
             # Site info
             'site_id': self.site,

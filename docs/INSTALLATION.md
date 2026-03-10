@@ -316,7 +316,7 @@ Login with the credentials you configured during setup.
 2. Click the **Settings cog (⚙️)** in the dashboard header
 3. Enter your UniFi controller details:
 
-**Controller URL:**
+**Controller URL** (must be a local IP or hostname — `unifi.ui.com` cloud access is not supported):
    - **UniFi OS devices** (UDM, UCG, Cloud Key with recent firmware): `https://192.168.1.1` (no port)
    - **Self-hosted controllers**: `https://192.168.1.1:8443` (include port 8443)
 
