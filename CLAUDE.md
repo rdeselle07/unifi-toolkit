@@ -81,6 +81,11 @@ UniFi Controller → unifi_client.py (get_health, get_system_info)
 
 ## Completed Work
 
+### v1.11.1
+- Fix Threat Watch missing geo/category data from v2 API (#79) — `source.region` mapped to country code (was looking for nonexistent `source.country`), `ips.category_name` mapped to category (was using `ips.ips_category` which only exists in `policies[]`)
+- Document that `unifi.ui.com` cloud access is not supported — controller URL must be a local IP/hostname (README.md and INSTALLATION.md)
+- Merged Dependabot PRs #93 (docker/metadata-action v5 → v6) and #94 (docker/build-push-action v6 → v7)
+
 ### v1.11.0
 - Drop legacy standalone controller support (#92) — removed aiounifi dependency entirely, all API calls now use direct aiohttp requests to UniFi OS endpoints
 - Remove Python 3.13 version block from `setup.sh` — the aiounifi constraint was the only reason for the block
