@@ -46,108 +46,19 @@ def get_last_refresh() -> datetime:
 
 def parse_unifi_event(event: dict) -> dict:
     """
-    Parse a raw UniFi IPS event into our database format.
+    Parse a UniFi IPS event into our database format.
 
-    Supports both:
-    - Legacy format (stat/ips/event endpoint, pre-Network 10.x)
-    - v2 format (traffic-flows endpoint, Network 10.x+)
+    Both v2 (traffic-flows) and legacy (stat/ips/event) responses arrive
+    pre-normalized to legacy field names by unifi_client._normalize_v2_event(),
+    so a single parser handles both.
 
     Args:
-        event: Raw event dictionary from UniFi API
+        event: Normalized event dictionary from UniFi API
 
     Returns:
         Dictionary with fields mapped to our ThreatEvent model
     """
-    # Detect v2 format by presence of 'ips' object
-    if 'ips' in event:
-        return _parse_v2_traffic_flow(event)
-    else:
-        return _parse_legacy_ips_event(event)
-
-
-def _parse_v2_traffic_flow(event: dict) -> dict:
-    """
-    Parse a v2 traffic-flows event (Network 10.x+) into our database format.
-
-    The v2 format has IPS data nested in an 'ips' object and source/destination
-    info in 'source' and 'destination' objects.
-    """
-    # Parse timestamp - v2 typically uses 'time' in milliseconds
-    # but _normalize_timestamp handles either format safely
-    timestamp = None
-    if 'time' in event:
-        try:
-            timestamp = _normalize_timestamp(event['time'])
-        except (ValueError, TypeError):
-            pass
-    if not timestamp:
-        timestamp = datetime.now(timezone.utc)
-
-    # Extract IPS data
-    ips = event.get('ips', {})
-    source = event.get('source', {})
-    destination = event.get('destination', {})
-
-    # Map risk level to severity (v2 uses 'risk': low/medium/high)
-    risk = event.get('risk', 'low')
-    severity_map = {'high': 1, 'medium': 2, 'low': 3}
-    severity = severity_map.get(risk, 3)
-
-    # Map action (v2 uses 'action': allowed/blocked)
-    action = event.get('action', 'alert')
-    if action == 'blocked':
-        action = 'block'
-    elif action == 'allowed':
-        action = 'alert'
-
-    # Build signature message from IPS data
-    signature = ips.get('signature', '')
-    message = ips.get('advanced_information', '') or signature
-
-    return {
-        'unifi_event_id': event.get('id') or str(event.get('time', '')),
-        'flow_id': ips.get('session_id'),
-        'timestamp': timestamp,
-
-        # Alert info from ips object
-        'signature': signature,
-        'signature_id': ips.get('signature_id'),
-        'severity': severity,
-        'category': ips.get('category_name'),
-        'action': action,
-        'message': message,
-
-        # Network - from source/destination objects
-        'src_ip': source.get('ip'),
-        'src_port': source.get('port'),
-        'src_mac': source.get('mac'),
-        'dest_ip': destination.get('ip'),
-        'dest_port': destination.get('port'),
-        'dest_mac': destination.get('mac'),
-        'protocol': event.get('protocol'),
-        'app_protocol': event.get('service'),
-        'interface': None,  # Not available in v2
-
-        # Geo - v2 doesn't include geolocation data
-        'src_country': None,
-        'src_city': None,
-        'src_latitude': None,
-        'src_longitude': None,
-        'src_asn': None,
-        'src_org': None,
-
-        'dest_country': None,
-        'dest_city': None,
-        'dest_latitude': None,
-        'dest_longitude': None,
-        'dest_asn': None,
-        'dest_org': None,
-
-        # Meta
-        'site_id': None,  # Not directly available in v2
-        'archived': False,
-        'raw_data': json.dumps(event)
-    }
+    return _parse_legacy_ips_event(event)
 
 
 def _normalize_timestamp(value) -> datetime:

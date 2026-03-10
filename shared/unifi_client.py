@@ -831,7 +831,9 @@ class UniFiClient:
             max_events: Maximum total events to return (default: 1000)
 
         Returns:
-            List of traffic flow dictionaries (normalized to legacy format)
+            List of traffic flow dictionaries normalized to legacy field names
+            (e.g., src_ip_country, inner_alert_category) via _normalize_v2_event().
+            The Threat Watch scheduler depends on this normalization.
         """
         if not self._session:
             raise RuntimeError("Not connected to UniFi controller. Call connect() first.")
