@@ -31,7 +31,7 @@ Track specific client devices through your UniFi infrastructure.
 
 ### Threat Watch
 Monitor IDS/IPS security events from your UniFi gateway.
-- Real-time event monitoring (supports UniFi Network 10.x and legacy firmware)
+- Real-time event monitoring (requires UniFi OS)
 - Threat categorization and analysis
 - Top attackers and targets
 - Ignore rules: filter noise by IP address and severity level
@@ -58,9 +58,9 @@ Build the perfect UniFi network at [uiproductselector.com](https://uiproductsele
 ## Quick Start
 
 ### Requirements
-- **Docker** (recommended) or Python 3.9-3.12
+- **Docker** (recommended) or Python 3.9+
 - **Ubuntu 22.04/24.04** (or other Linux)
-- Access to UniFi Controller
+- **UniFi OS** controller (UDM, UCG, Cloud Key Gen2+) — standalone/self-hosted controllers are not supported as of v1.11.0
 
 ### Local Deployment (LAN Only)
 
@@ -176,9 +176,9 @@ Configure via `.env` or the web UI (web UI takes precedence):
 | Variable | Description |
 |----------|-------------|
 | `UNIFI_CONTROLLER_URL` | Local controller IP/hostname (e.g., `https://192.168.1.1`) |
-| `UNIFI_USERNAME` | Username (legacy controllers) |
-| `UNIFI_PASSWORD` | Password (legacy controllers) |
-| `UNIFI_API_KEY` | API key (UniFi OS: UDM, UCG, Cloud Key) |
+| `UNIFI_API_KEY` | API key (recommended — generate in UniFi OS Settings → Admins) |
+| `UNIFI_USERNAME` | Username (fallback if not using API key) |
+| `UNIFI_PASSWORD` | Password (fallback if not using API key) |
 | `UNIFI_SITE_ID` | Site ID from URL, not friendly name (default: `default`). For multi-site, use ID from `/manage/site/{id}/...` |
 | `UNIFI_VERIFY_SSL` | SSL verification (default: `false`) |
 
@@ -229,8 +229,9 @@ Never expose UniFi controllers via port forwarding
 ## Troubleshooting
 
 ### Can't connect to UniFi controller
+- **UniFi OS required** — standalone/self-hosted controllers are not supported (v1.11.0+). If you're running the Java-based controller software, v1.10.3 is the last compatible version.
 - Set `UNIFI_VERIFY_SSL=false` for self-signed certificates
-- UniFi OS devices (UDM, UCG) require an API key, not username/password
+- API key auth is recommended — generate in UniFi OS Settings → Admins
 - Verify network connectivity to controller
 
 ### Device not showing as online
@@ -261,7 +262,7 @@ Never expose UniFi controllers via port forwarding
 git clone https://github.com/Crosstalk-Solutions/unifi-toolkit.git
 cd unifi-toolkit
 
-# Create virtual environment (Python 3.9-3.12 only, NOT 3.13+)
+# Create virtual environment (Python 3.9+)
 python3 -m venv venv
 source venv/bin/activate
 

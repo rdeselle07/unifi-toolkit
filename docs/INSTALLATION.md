@@ -91,7 +91,7 @@ sudo apt install -y python3.12 python3.12-venv git
 sudo apt install -y python3.11 python3.11-venv git
 # OR use the deadsnakes PPA for Python 3.12
 
-# Verify Python version (must be 3.9-3.12, NOT 3.13+)
+# Verify Python version (3.9+)
 python3.12 --version
 ```
 
@@ -317,18 +317,17 @@ Login with the credentials you configured during setup.
 3. Enter your UniFi controller details:
 
 **Controller URL** (must be a local IP or hostname — `unifi.ui.com` cloud access is not supported):
-   - **UniFi OS devices** (UDM, UCG, Cloud Key with recent firmware): `https://192.168.1.1` (no port)
-   - **Self-hosted controllers**: `https://192.168.1.1:8443` (include port 8443)
+   - `https://192.168.1.1` (no port needed for UniFi OS devices)
 
-**Authentication (auto-detected):**
-   - **API Key (recommended for UniFi OS)**: Generate in UniFi OS Settings → Integrations → API Keys
-   - **Username/Password**: Works for all controller types - UI Toolkit auto-detects UniFi OS vs legacy
+> **Note:** UI Toolkit requires **UniFi OS** (UDM, UCG, Cloud Key Gen2+). Standalone/self-hosted controllers (the Java-based controller software) are not supported as of v1.11.0. If you're on a standalone controller, v1.10.3 is the last compatible version.
+
+**Authentication:**
+   - **API Key (recommended)**: Generate in UniFi OS Settings → Admins
+   - **Username/Password**: Supported as a fallback, but API key is preferred
 
 **Other Settings:**
    - **Site ID**: Usually `default`. For multi-site, use the alphanumeric code from the URL (e.g., `7jnove4a` from `/network/7jnove4a/...`)
    - **Verify SSL**: Disable for self-signed certificates (most UniFi deployments)
-
-**Note**: Cloud Key Gen2+ now runs UniFi OS on recent firmware. Use the UniFi OS URL format (no port) for these devices.
 
 ### Test Connection
 
@@ -500,10 +499,11 @@ pip install -r requirements.txt
 **Verify network access:**
 ```bash
 # Test connectivity to controller
-curl -k https://192.168.1.1:8443/status
+curl -k https://192.168.1.1/
 ```
 
 **Common issues:**
+- **Not on UniFi OS** — Standalone/self-hosted controllers are not supported (v1.11.0+). v1.10.3 is the last compatible version.
 - Wrong controller URL
 - Firewall blocking access
 - Invalid credentials
